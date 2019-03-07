@@ -15,7 +15,7 @@ public class HandleOutFile {
 
 	public static final String SIZE = "size";
 	public static final String ADDRESS = "address";
-	public static final int PAGESIZE = 64 * 1024;
+	public static final int PAGESIZE = 4 * 1024;
 	
 	/**
 	 * func: 预处理指定文件
@@ -24,50 +24,35 @@ public class HandleOutFile {
 	 * @throws IOException
 	 */
 	public void handle(String filepath_input,String filepath_output) throws IOException {
-		String str_start = "      0: system.mem_ctrls: ";
+		
+		String str = ": system.mem_ctrls: ";
+		int strLen = str.length();
+		
 		BufferedReader reader = new BufferedReader(new FileReader(filepath_input));
 		BufferedWriter writer = new BufferedWriter(new FileWriter(filepath_output));
 		String readLine;
 		while((readLine = reader.readLine()) !=null) {
 			// 去掉字符串中的 str_start 
-			readLine = readLine.substring(str_start.length());
+			readLine = readLine.substring(readLine.indexOf(str)+strLen);
 			// 保留包含 address 子串的字符串
 			if(readLine.contains("address") && !readLine.startsWith("000000")) {
-				//去掉字符串中的 trls, rls,ls,s,:, 
-				if(readLine.startsWith("trls: ")) {
-					readLine = readLine.substring("trls: ".length());
-				}else if(readLine.startsWith("rls: ")) {
-					readLine = readLine.substring("rls: ".length());
-				}else if(readLine.startsWith("ls: ")) {
-					readLine = readLine.substring("ls: ".length());
-				}else if(readLine.startsWith("s: ")) {
-					readLine = readLine.substring("s: ".length());
-				}else if(readLine.startsWith(": ")) {
-					readLine = readLine.substring(": ".length());
-				}else if(readLine.startsWith(" ")) {
-					readLine = readLine.substring(" ".length());
-				}
 				// 去掉字符串中含有 access 的子集
 				if(!readLine.startsWith("access")) {
 					String result = "";
-					String[] message = new String[2];
 					// 将字符串分割成数组,得到其中写入的大小和写入的地址数据
 					String[] strings = readLine.split(" ");
-					// 写入大小
-					message[0] = strings[5];
 					// 写入地址
-					message[1] = strings[8];
 					if (readLine.startsWith("Read") || readLine.startsWith("IFetch")) {
 						result += READ + " " ;
 					} else {
 						result += WRITE + " ";
 					}
-					result += message[0] + " " + Integer.parseInt(message[1].substring(2),16) + "\n";
+					
+					result += strings[5] + " " + Integer.parseInt(strings[8].substring(2),16) + "\n";
 					// 将数据写入到filepath_out 文件中
 					writer.write(result);
 				}
 			}
-			
 		}
 		System.out.println("数据写入 " + filepath_output + " 成功！！！");
 		reader.close();
@@ -134,9 +119,9 @@ public class HandleOutFile {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String orginPath = "E:\\gem5\\mem.out";
-		String destPath = "E:\\gem5\\mem-5.out";
-		String resultPath = "E:\\gem5\\mem-2.csv";
+		String orginPath = "E:\\gem5\\mem-gcc.out";
+		String destPath = "E:\\gem5\\mem-gcc-1.out";
+		String resultPath = "E:\\gem5\\mem-gcc.csv";
 		HandleOutFile handleOutFile = new HandleOutFile();
 		handleOutFile.handle(orginPath, destPath);
 		handleOutFile.countAndWriteToCSV(destPath, resultPath);
