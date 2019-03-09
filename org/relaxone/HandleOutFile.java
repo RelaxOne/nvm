@@ -119,9 +119,9 @@ public class HandleOutFile {
 	}
 	
 	public static void main(String[] args) throws IOException {
-		String orginPath = "E:\\gem5\\mem-gcc.out";
-		String destPath = "E:\\gem5\\mem-gcc-1.out";
-		String resultPath = "E:\\gem5\\mem-gcc.csv";
+		String orginPath = "E:\\CentosShare\\mem-mcf.out";
+		String destPath = "E:\\gem5\\mem-mcf-1.out";
+		String resultPath = "E:\\gem5\\mem-mcf.csv";
 		HandleOutFile handleOutFile = new HandleOutFile();
 		handleOutFile.handle(orginPath, destPath);
 		handleOutFile.countAndWriteToCSV(destPath, resultPath);
